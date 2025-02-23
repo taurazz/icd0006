@@ -1,0 +1,87 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f4f4f4;
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+#status, #timer {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+#board-container {
+    position: relative;
+    display: inline-block;
+}
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(5, 80px);
+    grid-template-rows: repeat(5, 80px);
+    gap: 5px;
+    background-color: #000;
+    padding: 5px;
+    border-radius: 10px;
+    position: relative;
+}
+
+.cell {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: bold;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.cell:hover {
+    background-color: #e0e0e0;
+}
+
+/* Draggable 3x3 Grid */
+#subgrid {
+    position: absolute;
+    width: 256px; /* 3 cells + padding */
+    height: 256px;
+    background-color: rgba(0, 123, 255, 0.3);
+    border: 2px solid blue;
+    cursor: grab;
+    z-index: 10;
+    border-radius: 5px;
+    pointer-events: none;
+}
+
+#controls {
+    margin-top: 20px;
+}
+
+button {
+    font-size: 16px;
+    padding: 10px 15px;
+    margin: 5px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#reset {
+    background-color: #6fcccc;
+    color: white;
+}
+
+#ai-toggle {
+    background-color: #7a609c;
+    color: white;
+}
+
+button:hover {
+    opacity: 0.8;
+}
