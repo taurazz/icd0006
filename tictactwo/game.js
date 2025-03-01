@@ -121,14 +121,14 @@ export class Game {
     }
 
     updateStatus() {
-        document.getElementById("status").textContent = `Player ${this.currentPlayer}'s turn`;
+        document.getElementById("status").textContent = `player ${this.currentPlayer}'s turn`;
     }
 
     startTimer() {
         this.timer = 0;
         clearInterval(this.interval);
         this.interval = setInterval(() => {
-            document.getElementById("timer").textContent = `Time: ${++this.timer}s`;
+            document.getElementById("timer").textContent = `time: ${++this.timer}s`;
         }, 1000);
     }
 

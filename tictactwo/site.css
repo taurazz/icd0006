@@ -1,7 +1,8 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: monospace, sans-serif;
     text-align: center;
-    background-color: #f4f4f4;
+    background-color: #ffeecc;
+    color: #46425e;
 }
 
 h1 {
@@ -23,7 +24,7 @@ h1 {
     grid-template-columns: repeat(5, 80px);
     grid-template-rows: repeat(5, 80px);
     gap: 5px;
-    background-color: #000;
+    background-color: #ffeecc;
     padding: 5px;
     border-radius: 10px;
     position: relative;
@@ -35,15 +36,16 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
+    font-family: cursive, sans-serif;
     font-size: 36px;
     font-weight: bold;
-    background-color: #fff;
+    background-color: #ffb0a3;
     cursor: pointer;
     transition: background 0.3s;
 }
 
 .cell:hover {
-    background-color: #e0e0e0;
+    background-color: #fc8d7c;
 }
 
 /* Draggable 3x3 Grid */
@@ -51,8 +53,7 @@ h1 {
     position: absolute;
     width: 256px; /* 3 cells + padding */
     height: 256px;
-    background-color: rgba(0, 123, 255, 0.3);
-    border: 2px solid blue;
+    background-color: #ffeecc75;
     cursor: grab;
     z-index: 10;
     border-radius: 5px;
@@ -74,12 +75,14 @@ button {
 
 #reset {
     background-color: #6fcccc;
-    color: white;
+    color: #ffeecc;
+    font-family: monospace, sans-serif;
 }
 
 #ai-toggle {
     background-color: #7a609c;
-    color: white;
+    color: #ffeecc;
+    font-family: monospace, sans-serif;
 }
 
 button:hover {
