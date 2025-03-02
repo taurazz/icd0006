@@ -28,7 +28,18 @@
         const aiMoveBtn = document.createElement("button");
         aiMoveBtn.id = "ai-move";
         aiMoveBtn.textContent = "ai move";
-        aiMoveBtn.addEventListener("click", () => game.aiMove());
+        
+        let debounce = false;
+        aiMoveBtn.addEventListener("click", () => {
+            if (debounce) return;
+            debounce = true;
+            game.aiMove();
+
+            setTimeout(() => {
+                debounce = false;
+            }, 200);
+        });
+        
         controlsDiv.appendChild(aiMoveBtn);
 
         

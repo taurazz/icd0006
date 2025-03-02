@@ -44,6 +44,21 @@ h1 {
     transition: background 0.3s;
 }
 
+.cell.selected {
+    background-color: #7a609c;
+}
+
+.cell.winner {
+    background-color: #ffb0a3;
+    animation-name: fade;
+    animation-duration: 1s;
+}
+
+@keyframes fade {
+    from { background-color: #6fcccc; }
+    to { background-color: #ffb0a3; }
+}
+
 .cell:hover, button:hover {
     opacity: 0.7;
 }

@@ -38,9 +38,20 @@ export class Game {
 
 
     handleCellClick(x, y) {
+        const now = Date.now();
+        if (now - this.lastClickTime < this.clickCooldown || this.isProcessingClick) {
+            return;
+        }
+
+        this.lastClickTime = now;
+        this.isProcessingClick = true;
+
         // Always ensure the move is within the 3x3 grid
         if (x < this.gridPos.x || x >= this.gridPos.x + 3 ||
-            y < this.gridPos.y || y >= this.gridPos.y + 3) return;
+            y < this.gridPos.y || y >= this.gridPos.y + 3) {
+                this.isProcessingClick = false;
+                return;
+            }
 
         if (this.gamePhase === 'placement') {
             this.handlePlacePiece(x, y);
@@ -51,6 +62,10 @@ export class Game {
                 this.handleMovePiece(x, y);
             }
         }
+
+        setTimeout(() => {
+            this.isProcessingClick = false;
+        }, 50);
     }
 
     handlePlacePiece(x, y) {
@@ -124,8 +139,17 @@ export class Game {
     }
 
     moveGrid(dx, dy) {
+        if (this.isProcessingMove) {
+            return;
+        }
+        
+        this.isProcessingMove = true;
+        
         // Check if advanced moves are allowed
-        if (this.moveCount < 4) return;
+        if (this.moveCount < 4) {
+            this.isProcessingMove = false;
+            return;
+        }
         
         const newX = this.gridPos.x + dx;
         const newY = this.gridPos.y + dy;
@@ -141,6 +165,10 @@ export class Game {
 
             this.finishTurn();
         }
+
+        setTimeout(() => {
+            this.isProcessingMove = false;
+        }, 300);
         
     }
 
@@ -148,8 +176,12 @@ export class Game {
         // Check for win
         if (this.checkWin()) {
             this.updateBoard();
-            alert(`${this.currentPlayer} wins!`);
-            this.resetGame();
+
+            setTimeout(() => {
+                alert(`${this.currentPlayer} wins!`);
+                this.resetGame();
+            }, 1000); // 1000ms = 1 second delay
+
             return;
         }
         
@@ -196,6 +228,11 @@ export class Game {
         // Check rows
         for (let y = 0; y < 3; y++) {
             if (grid[y][0] && grid[y][0] === grid[y][1] && grid[y][1] === grid[y][2]) {
+                this.highlightWinningCells([
+                    {x: gridX, y: gridY + y},
+                    {x: gridX + 1, y: gridY + y},
+                    {x: gridX + 2, y: gridY + y}
+                ]);
                 return true;
             }
         }
@@ -203,19 +240,49 @@ export class Game {
         // Check columns
         for (let x = 0; x < 3; x++) {
             if (grid[0][x] && grid[0][x] === grid[1][x] && grid[1][x] === grid[2][x]) {
+                this.highlightWinningCells([
+                    {x: gridX + x, y: gridY},
+                    {x: gridX + x, y: gridY + 1},
+                    {x: gridX + x, y: gridY + 2}
+                ]);
                 return true;
             }
         }
         
         // Check diagonals
         if (grid[0][0] && grid[0][0] === grid[1][1] && grid[1][1] === grid[2][2]) {
+            this.highlightWinningCells([
+                {x: gridX, y: gridY},
+                {x: gridX + 1, y: gridY + 1},
+                {x: gridX + 2, y: gridY + 2}
+            ]);
             return true;
         }
         if (grid[0][2] && grid[0][2] === grid[1][1] && grid[1][1] === grid[2][0]) {
+            this.highlightWinningCells([
+                {x: gridX + 2, y: gridY},
+                {x: gridX + 1, y: gridY + 1},
+                {x: gridX, y: gridY + 2}
+            ]);
             return true;
         }
         
         return false;
+    }
+
+    highlightWinningCells(cells) {
+        // First remove any previous winning highlights
+        document.querySelectorAll('.cell.winner').forEach(cell => {
+            cell.classList.remove('winner');
+        });
+        
+        // Add winner class to the winning cells
+        cells.forEach(cell => {
+            const cellElement = document.querySelector(`.cell[data-x="${cell.x}"][data-y="${cell.y}"]`);
+            if (cellElement) {
+                cellElement.classList.add('winner');
+            }
+        });
     }
 
     updateStatus() {
@@ -271,6 +338,10 @@ export class Game {
         const grid = document.getElementById("grid");
         grid.style.left = `${this.gridPos.x * 85}px`;
         grid.style.top = `${this.gridPos.y * 85}px`;
+
+        document.querySelectorAll('.cell.winner').forEach(cell => {
+            cell.classList.remove('winner');
+        });
     }
 
     aiMove() {
@@ -280,17 +351,15 @@ export class Game {
         this.ai.makeAIMove(this.currentPlayer, opponent);
     }
     
-    // Helper methods for AI integration
     isCellEmpty(x, y) {
         return this.board[y][x] === null;
     }
     
-    // Properties needed for AI
     get gridPosition() {
         return this.gridPos;
     }
     
     get moveAfterNMoves() {
-        return 2; // Each player places 2 pieces before advanced moves
+        return 2;
     }
 }
