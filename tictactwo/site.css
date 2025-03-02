@@ -44,12 +44,12 @@ h1 {
     transition: background 0.3s;
 }
 
-.cell:hover {
-    background-color: #fc8d7c;
+.cell:hover, button:hover {
+    opacity: 0.7;
 }
 
 /* Draggable 3x3 Grid */
-#subgrid {
+#grid {
     position: absolute;
     width: 256px; /* 3 cells + padding */
     height: 256px;
@@ -79,12 +79,13 @@ button {
     font-family: monospace, sans-serif;
 }
 
-#ai-toggle {
+#ai-move {
     background-color: #7a609c;
     color: #ffeecc;
     font-family: monospace, sans-serif;
 }
 
-button:hover {
-    opacity: 0.8;
+.grid-control-btn {
+    background-color: #ffb0a3;
+    color: #ffeecc;
 }
