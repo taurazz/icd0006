@@ -1,0 +1,106 @@
+body {
+  font-family: monospace, sans-serif;
+  text-align: center;
+  background-color: #ffeecc;
+  color: #46425e;
+}
+
+h1 {
+  margin-bottom: 10px;
+}
+
+#status, #timer {
+  font-size: 18px;
+  margin: 10px 0;
+}
+
+#board-container {
+  position: relative;
+  display: inline-block;
+}
+
+#board {
+  display: grid;
+  grid-template-columns: repeat(5, 80px);
+  grid-template-rows: repeat(5, 80px);
+  gap: 5px;
+  background-color: #ffeecc;
+  padding: 5px;
+  border-radius: 10px;
+  position: relative;
+}
+
+.cell {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: cursive, sans-serif;
+  font-size: 36px;
+  font-weight: bold;
+  background-color: #ffb0a3;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.cell.selected {
+  background-color: #7a609c;
+}
+
+.cell.winner {
+  background-color: #ffb0a3;
+  animation-name: fade;
+  animation-duration: 1s;
+}
+
+@keyframes fade {
+  from { background-color: #6fcccc; }
+  to { background-color: #ffb0a3; }
+}
+
+.cell:hover, button:hover {
+  opacity: 0.7;
+}
+
+/* Draggable 3x3 Grid */
+#grid {
+  position: absolute;
+  width: 256px; /* 3 cells + padding */
+  height: 256px;
+  background-color: #ffeecc75;
+  cursor: grab;
+  z-index: 10;
+  border-radius: 5px;
+  pointer-events: none;
+}
+
+#controls {
+  margin-top: 20px;
+}
+
+button {
+  font-size: 16px;
+  padding: 10px 15px;
+  margin: 5px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+#reset {
+  background-color: #6fcccc;
+  color: #ffeecc;
+  font-family: monospace, sans-serif;
+}
+
+#ai-move {
+  background-color: #7a609c;
+  color: #ffeecc;
+  font-family: monospace, sans-serif;
+}
+
+.grid-control-btn {
+  background-color: #ffb0a3;
+  color: #ffeecc;
+}

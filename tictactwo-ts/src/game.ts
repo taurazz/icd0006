@@ -1,21 +1,48 @@
-import { createHeader, setupControls, createBoard, setupGrid } from './ui.js';
+import AI from './ai';
+import { createHeader, setupControls, createBoard, setupGrid } from './ui';
+
+export type PlayerType = 'X' | 'O';
+export type PositionType = { x: number, y: number };
+export type BoardType = (string | null)[][];
+type GamePhaseType = 'placement' | 'movement';
+
 
 export class Game {
+    board: (string | null)[][];
+    currentPlayer: PlayerType;
+    gridPos: PositionType;
+    timer: number;
+    interval: number | undefined;
+    moveCount: number;
+    private selectedPiece: PositionType | null;
+    gamePhase: GamePhaseType;
+    ai: AI | null;
+    xPieces: number;
+    oPieces: number;
+    private lastClickTime: number;
+    private clickCooldown: number;
+    private isProcessingClick: boolean;
+    private isProcessingMove: boolean;
+
     constructor() {
-        this.board = Array(5).fill().map(() => Array(5).fill(null));
+        this.board = Array(5).fill(null).map(() => Array(5).fill(null));
         this.currentPlayer = 'X';
-        this.gridPos = { x: 1, y: 1 }; // 3x3 grid position
+        this.gridPos = { x: 1, y: 1 };
         this.timer = 0;
-        this.interval = null;
+        this.interval = undefined;
         this.moveCount = 0;
         this.selectedPiece = null;
-        this.gamePhase = 'placement'; // 'placement', 'movement'
+        this.gamePhase = 'placement';
         this.ai = null;
-        this.xPieces = 5;
-        this.oPieces = 5;
+        this.xPieces = 4;
+        this.oPieces = 4;
+        this.lastClickTime = 0;
+        this.clickCooldown = 200;
+        this.isProcessingClick = false;
+        this.isProcessingMove = false; 
     }
 
-    init() {
+    init(): void {
         createHeader(this);
         createBoard(this);
         setupGrid();
@@ -24,12 +51,11 @@ export class Game {
         setupControls(this);
         this.updateMoveOptions();
 
-        const grid = document.getElementById("grid");
+        const grid = document.getElementById("grid")!;
         grid.style.left = `${this.gridPos.x * 85}px`;
         grid.style.top = `${this.gridPos.y * 85}px`;
 
-        // Create the AI instance with a reference to this game
-        import('./ai.js').then(module => {
+        import('./ai').then(module => {
             const AI = module.default;
             this.ai = new AI(this);
         });
@@ -37,7 +63,7 @@ export class Game {
 
 
 
-    handleCellClick(x, y) {
+    handleCellClick(x: number, y: number) {
         const now = Date.now();
         if (now - this.lastClickTime < this.clickCooldown || this.isProcessingClick) {
             return;
@@ -46,7 +72,6 @@ export class Game {
         this.lastClickTime = now;
         this.isProcessingClick = true;
 
-        // Always ensure the move is within the 3x3 grid
         if (x < this.gridPos.x || x >= this.gridPos.x + 3 ||
             y < this.gridPos.y || y >= this.gridPos.y + 3) {
                 this.isProcessingClick = false;
@@ -68,7 +93,7 @@ export class Game {
         }, 50);
     }
 
-    handlePlacePiece(x, y) {
+    handlePlacePiece(x: number, y: number): void {
         if (this.currentPlayer === 'X' && this.xPieces == 0 || this.currentPlayer === 'O' && this.oPieces == 0) {
             return;
         }
@@ -78,12 +103,12 @@ export class Game {
         }
     }
 
-    handleMovePiece(x, y) {
+    handleMovePiece(x: number, y: number): void {
         if (!this.selectedPiece) {
             // Select a piece
             if (this.board[y][x] === this.currentPlayer) {
                 this.selectedPiece = { x, y };
-                document.querySelector(`.cell[data-x="${x}"][data-y="${y}"]`).classList.add('selected');
+                document.querySelector(`.cell[data-x="${x}"][data-y="${y}"]`)!.classList.add('selected');
             }
         } else {
             // Move to empty cell
@@ -92,19 +117,19 @@ export class Game {
                 this.finishTurn();
             } else {
                 // Deselect if clicking on another piece or same piece
-                document.querySelector(`.cell[data-x="${this.selectedPiece.x}"][data-y="${this.selectedPiece.y}"]`).classList.remove('selected');
+                document.querySelector(`.cell[data-x="${this.selectedPiece.x}"][data-y="${this.selectedPiece.y}"]`)!.classList.remove('selected');
                 this.selectedPiece = null;
                 
                 // If clicked on own piece, select it
                 if (this.board[y][x] === this.currentPlayer) {
                     this.selectedPiece = { x, y };
-                    document.querySelector(`.cell[data-x="${x}"][data-y="${y}"]`).classList.add('selected');
+                    document.querySelector(`.cell[data-x="${x}"][data-y="${y}"]`)!.classList.add('selected');
                 }
             }
         }
     }
 
-    placePiece(x, y, player) {
+    placePiece(x: number, y: number, player: PlayerType): void {
         this.board[y][x] = player;
         this.updateBoard();
         this.moveCount++;
@@ -115,7 +140,6 @@ export class Game {
             this.oPieces--;
         }
 
-        // After both players have placed at least two pieces, switch to movement phase
         if (this.xPieces <= 3 && this.oPieces <= 3) {
             this.setGamePhase('movement');
         } else {
@@ -126,26 +150,24 @@ export class Game {
         }
     
 
-    movePiece(fromX, fromY, toX, toY) {
+    movePiece(fromX: number, fromY: number, toX: number, toY: number): void {
         if (this.selectedPiece) {
-            document.querySelector(`.cell[data-x="${fromX}"][data-y="${fromY}"]`).classList.remove('selected');
+            document.querySelector(`.cell[data-x="${fromX}"][data-y="${fromY}"]`)!.classList.remove('selected');
         }
         
-        // Move the piece
         this.board[toY][toX] = this.board[fromY][fromX];
         this.board[fromY][fromX] = null;
         this.selectedPiece = null;
         this.updateBoard();
     }
 
-    moveGrid(dx, dy) {
+    moveGrid(dx: number, dy: number): void {
         if (this.isProcessingMove) {
             return;
         }
         
         this.isProcessingMove = true;
         
-        // Check if advanced moves are allowed
         if (this.moveCount < 4) {
             this.isProcessingMove = false;
             return;
@@ -154,12 +176,10 @@ export class Game {
         const newX = this.gridPos.x + dx;
         const newY = this.gridPos.y + dy;
         
-        // Validate new position is within bounds
         if (newX >= 0 && newX + 3 <= 5 && newY >= 0 && newY + 3 <= 5) {
             this.gridPos = { x: newX, y: newY };
             
-            // Update visual position
-            const grid = document.getElementById("grid");
+            const grid = document.getElementById("grid")!;
             grid.style.left = `${newX * 85}px`;
             grid.style.top = `${newY * 85}px`;
 
@@ -172,52 +192,54 @@ export class Game {
         
     }
 
-    finishTurn() {
-        // Check for win
+    finishTurn(): void {
         if (this.checkWin()) {
             this.updateBoard();
 
             setTimeout(() => {
                 alert(`${this.currentPlayer} wins!`);
                 this.resetGame();
-            }, 1000); // 1000ms = 1 second delay
+            }, 1000);
 
             return;
         }
         
-        // Switch player
         this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
         this.updateStatus();
         
-        // Reset selection if any
         if (this.selectedPiece) {
-            document.querySelector(`.cell[data-x="${this.selectedPiece.x}"][data-y="${this.selectedPiece.y}"]`).classList.remove('selected');
+            document.querySelector(`.cell[data-x="${this.selectedPiece.x}"][data-y="${this.selectedPiece.y}"]`)!.classList.remove('selected');
             this.selectedPiece = null;
         }
     }
 
-    updateBoard() {
-        document.querySelectorAll(".cell").forEach(cell => {
-            const x = parseInt(cell.dataset.x);
-            const y = parseInt(cell.dataset.y);
-            cell.textContent = this.board[y][x] || "";
+    updateBoard(): void {
+        document.querySelectorAll<HTMLDivElement>(".cell").forEach(cell => {
+            const xCell = cell.dataset.x;
+            const yCell = cell.dataset.y;
+
+            if (xCell !== undefined && yCell !== undefined) {
+                const x = parseInt(xCell);
+                const y = parseInt(yCell);
             
-            // Highlight cells within the current subgrid
-            if (x >= this.gridPos.x && x < this.gridPos.x + 3 &&
-                y >= this.gridPos.y && y < this.gridPos.y + 3) {
-                cell.classList.add('in-grid');
-            } else {
-                cell.classList.remove('in-grid');
+                cell.textContent = this.board[y][x] || "";
+                
+                if (x >= this.gridPos.x && x < this.gridPos.x + 3 &&
+                    y >= this.gridPos.y && y < this.gridPos.y + 3) {
+                    cell.classList.add('in-grid');
+                } else {
+                    cell.classList.remove('in-grid');
+                }
             }
         });
     }
 
-    checkWin() {
-        const gridX = this.gridPos.x;
-        const gridY = this.gridPos.y;
+    checkWin(): boolean {
+        const gridX: number = this.gridPos.x;
+        const gridY: number = this.gridPos.y;
 
-        // Extract the current 3x3 grid from the board
-        const grid = [];
+        // get the grid from the board
+        const grid: (string | null)[][] = [];
         for (let y = 0; y < 3; y++) {
             grid[y] = [];
             for (let x = 0; x < 3; x++) {
@@ -270,13 +292,11 @@ export class Game {
         return false;
     }
 
-    highlightWinningCells(cells) {
-        // First remove any previous winning highlights
+    highlightWinningCells(cells: PositionType[]): void {
         document.querySelectorAll('.cell.winner').forEach(cell => {
             cell.classList.remove('winner');
         });
         
-        // Add winner class to the winning cells
         cells.forEach(cell => {
             const cellElement = document.querySelector(`.cell[data-x="${cell.x}"][data-y="${cell.y}"]`);
             if (cellElement) {
@@ -285,57 +305,57 @@ export class Game {
         });
     }
 
-    updateStatus() {
-        document.getElementById("status").textContent = `player ${this.currentPlayer}'s turn (pieces left: ${this.currentPlayer === 'X' ? this.xPieces : this.oPieces})`;
+    updateStatus(): void {
+        document.getElementById("status")!.textContent = `player ${this.currentPlayer}'s turn (pieces left: ${this.currentPlayer === 'X' ? this.xPieces : this.oPieces})`;
         this.updateMoveOptions();
     }
     
+    //todo liiguta see finishturn sisse
     updateMoveOptions() {
         const gridControls = document.getElementById("grid-controls");
         const advancedMovesEnabled = this.currentPlayer === 'X' ? this.xPieces <= 3 : this.oPieces <= 3;
         if (gridControls) gridControls.style.opacity = advancedMovesEnabled ? "1" : "0.5";
     }
 
-    setGamePhase(phase) {
-        // Only allow advanced moves after both players have placed 2 pieces
+    setGamePhase(phase: GamePhaseType): void {
+    
         if (phase !== 'placement' && this.moveCount < 4) {
             return;
         }
         
         this.gamePhase = phase;
         
-        // Clear any selected piece when changing phases
         if (this.selectedPiece) {
-            document.querySelector(`.cell[data-x="${this.selectedPiece.x}"][data-y="${this.selectedPiece.y}"]`).classList.remove('selected');
+            document.querySelector(`.cell[data-x="${this.selectedPiece.x}"][data-y="${this.selectedPiece.y}"]`)!.classList.remove('selected');
             this.selectedPiece = null;
         }
         
         this.updateMoveOptions();
     }
 
-    startTimer() {
+    startTimer(): void {
         this.timer = 0;
         clearInterval(this.interval);
         this.interval = setInterval(() => {
-            document.getElementById("timer").textContent = `time: ${++this.timer}s`;
+            document.getElementById("timer")!.textContent = `time: ${++this.timer}s`;
         }, 1000);
     }
 
-    resetGame() {
-        this.board = Array(5).fill().map(() => Array(5).fill(null));
+    resetGame(): void {
+        this.board = Array(5).fill(null).map(() => Array(5).fill(null));
         this.currentPlayer = 'X';
         this.moveCount = 0;
         this.gamePhase = 'placement';
         this.selectedPiece = null;
-        this.xPieces = 5;
-        this.oPieces = 5;
+        this.xPieces = 4;
+        this.oPieces = 4;
         
         this.updateBoard();
         this.updateStatus();
         this.startTimer();
         this.gridPos = { x: 1, y: 1 };
 
-        const grid = document.getElementById("grid");
+        const grid = document.getElementById("grid")!;
         grid.style.left = `${this.gridPos.x * 85}px`;
         grid.style.top = `${this.gridPos.y * 85}px`;
 
@@ -344,14 +364,14 @@ export class Game {
         });
     }
 
-    aiMove() {
+    aiMove(): void {
         if (!this.ai) return;
         
         const opponent = this.currentPlayer === 'X' ? 'O' : 'X';
         this.ai.makeAIMove(this.currentPlayer, opponent);
     }
     
-    isCellEmpty(x, y) {
+    isCellEmpty(x: number, y: number): boolean {
         return this.board[y][x] === null;
     }
     
@@ -359,7 +379,7 @@ export class Game {
         return this.gridPos;
     }
     
-    get moveAfterNMoves() {
+    get moveAfterNMoves(): number {
         return 2;
     }
 }
