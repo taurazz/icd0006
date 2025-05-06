@@ -145,9 +145,7 @@ export class Game {
         } else {
             this.gamePhase = 'placement';
         }
-
-        this.updateMoveOptions();
-        }
+    }
     
 
     movePiece(fromX: number, fromY: number, toX: number, toY: number): void {
@@ -206,6 +204,7 @@ export class Game {
         
         this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
         this.updateStatus();
+        this.updateMoveOptions();
         
         if (this.selectedPiece) {
             document.querySelector(`.cell[data-x="${this.selectedPiece.x}"][data-y="${this.selectedPiece.y}"]`)!.classList.remove('selected');
@@ -306,14 +305,13 @@ export class Game {
     }
 
     updateStatus(): void {
-        document.getElementById("status")!.textContent = `player ${this.currentPlayer}'s turn (pieces left: ${this.currentPlayer === 'X' ? this.xPieces : this.oPieces})`;
-        this.updateMoveOptions();
+        document.getElementById("status")!.textContent 
+        = `player ${this.currentPlayer}'s turn (pieces left: ${this.currentPlayer === 'X' ? this.xPieces : this.oPieces})`;
     }
     
-    //todo liiguta see finishturn sisse
     updateMoveOptions() {
         const gridControls = document.getElementById("grid-controls");
-        const advancedMovesEnabled = this.currentPlayer === 'X' ? this.xPieces <= 3 : this.oPieces <= 3;
+        const advancedMovesEnabled = this.currentPlayer === 'X' ? this.xPieces < 3 : this.oPieces < 3;
         if (gridControls) gridControls.style.opacity = advancedMovesEnabled ? "1" : "0.5";
     }
 
@@ -352,6 +350,7 @@ export class Game {
         
         this.updateBoard();
         this.updateStatus();
+        this.updateMoveOptions();
         this.startTimer();
         this.gridPos = { x: 1, y: 1 };
 
