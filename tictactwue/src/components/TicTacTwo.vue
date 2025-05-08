@@ -1,12 +1,26 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
-import Game from '../bll/game.ts';
 import Board from './Board.vue';
+import SideMenu from './SideMenu.vue';
+import { useGameStore } from '../stores/GameStore.ts';
 
-const game = reactive(new Game());</script>
+const gameStore = useGameStore();
+</script>
 
 <template>
-    <Board :board=game.board @cell-click="(x: number, y: number) => game.placePiece(x, y)"/>
+    <div class="gamePage">
+        <SideMenu/>
+        <Board :board=gameStore.board 
+        :grid-pos=gameStore.gridPos 
+        :grid-size=3
+        @cell-click="(x: number, y: number) => gameStore.handleCellClick(x, y)"/>
+    </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.gamePage {
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+</style>
