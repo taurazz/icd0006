@@ -4,9 +4,8 @@
     <header class="header">
         <nav class="navbar">
             <ul class="navbar-list">
-                <li class="nav-item" @click="$emit('navigate', 'home')">Home</li>
-                <li class="nav-item" @click="$emit('navigate', 'about')">Play</li>
-                <li class="nav-item" @click="$emit('navigate', 'contact')">Log in</li>
+                <li class="nav-item"><RouterLink class="nav-link" to="/">Rules</RouterLink></li>
+                <li class="nav-item"><RouterLink class="nav-link" to="/play">Play</RouterLink></li>
             </ul>
         </nav>
     </header>
