@@ -1,14 +1,24 @@
 <script setup lang="ts">
 import MenuButton from './MenuButton.vue';
 import { useGameStore } from '../stores/GameStore.ts';
+import { usePlayerStore } from '../stores/PlayerStore.ts';
 
 const gameStore = useGameStore();
+const playerStore = usePlayerStore();
 
 const piecesLeft = () => {
     if (gameStore.currentPlayer === 'X') {
         return gameStore.xPieces;
     } else {
         return gameStore.oPieces;
+    }
+}
+
+const nextMove = () => {
+    if (gameStore.currentPlayer === 'X') {
+        return playerStore.playerOne;
+    } else {
+        return playerStore.playerTwo;
     }
 }
 
@@ -19,7 +29,8 @@ const piecesLeft = () => {
     <div class="sideMenu">        
         <h1>tictactwo</h1>
         <p class="text">
-            next move: {{ gameStore.currentPlayer }}<br>
+            next move: {{ nextMove() }}<br>
+            your piece: {{ gameStore.currentPlayer }}<br>
             pieces left: {{ piecesLeft() }}
         </p>
         
