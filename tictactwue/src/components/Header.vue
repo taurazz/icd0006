@@ -18,10 +18,10 @@ const playerTwoScore = ref(store.playerTwoScore);
             </ul>
             <div class="navbar-right">
                 <div class="player-one">
-                    <p>{{ playerOne }}: {{ playerOneScore }}</p>
+                    <p>{{ playerOne }}: {{ playerOneScore }} wins</p>
                 </div>
                 <div class="player-two">
-                    <p>{{ playerTwo }}: {{ playerTwoScore }}</p>
+                    <p>{{ playerTwo }}: {{ playerTwoScore }} wins</p>
                 </div>
             </div>
         </nav>

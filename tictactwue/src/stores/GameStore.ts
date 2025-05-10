@@ -7,7 +7,6 @@ export const useGameStore = defineStore('game', () => {
     const gridPos = ref<{ x: number, y: number }>({ x: 1, y: 1 });
     const timer = ref<number>(0);
     const selectedPiece = ref<{ x: number, y: number } | null>(null);
-    const gamePhase = ref<'placement' | 'movement'>('placement');
     const xPieces = ref<number>(4);
     const oPieces = ref<number>(4);
 
@@ -18,9 +17,9 @@ export const useGameStore = defineStore('game', () => {
                 return;
             }
 
-        if (gamePhase.value === 'placement') {
+        if (!canDoAdvancedMoves(currentPlayer.value)) {
             handlePlacePiece(x, y);
-        } else if (gamePhase.value === 'movement') {
+        } else if (canDoAdvancedMoves(currentPlayer.value)) {
             if (board.value[y][x] === null && selectedPiece === null) {
                 handlePlacePiece(x, y);
             } else {
@@ -48,7 +47,7 @@ export const useGameStore = defineStore('game', () => {
             oPieces.value--;
         }
 
-        currentPlayer.value = currentPlayer.value === 'X' ? 'O' : 'X';
+        finishTurn();
     }
 
     function handleMovePiece(x: number, y: number): void {
@@ -74,9 +73,27 @@ export const useGameStore = defineStore('game', () => {
     }
 
     function movePiece(fromX: number, fromY: number, toX: number, toY: number): void {
-
         board.value[toY][toX] = board.value[fromY][fromX];
         board.value[fromY][fromX] = null;
+        selectedPiece.value = null;
+        finishTurn();
+    }
+
+    function moveGrid(dx: number, dy: number): void {
+        if (!canDoAdvancedMoves(currentPlayer.value)) return;
+        
+        const newX = gridPos.value.x + dx;
+        const newY = gridPos.value.y + dy;
+        
+        if (newX >= 0 && newX + 3 <= 5 && newY >= 0 && newY + 3 <= 5) {
+            gridPos.value = { x: newX, y: newY };
+
+            finishTurn();
+        }
+    }
+
+    function finishTurn(): void {
+        currentPlayer.value = currentPlayer.value === 'X' ? 'O' : 'X';
         selectedPiece.value = null;
     }
 
@@ -117,11 +134,16 @@ export const useGameStore = defineStore('game', () => {
         
         return false;
     }
+
+    function canDoAdvancedMoves(player: 'X' | 'O'): boolean {
+        return player === 'X'
+            ? xPieces.value < 3
+            : oPieces.value < 3;
+    }
     
     function resetGame(): void {
         board.value = Array(5).fill(null).map(() => Array(5).fill(null));
         currentPlayer.value = 'X';
-        gamePhase.value = 'placement';
         selectedPiece.value = null;
         xPieces.value = 4;
         oPieces.value = 4;
@@ -129,6 +151,6 @@ export const useGameStore = defineStore('game', () => {
         timer.value = 0;
     }
 
-    return { board, currentPlayer, gridPos, timer, selectedPiece, gamePhase, xPieces, oPieces, 
-        handleCellClick, placePiece, resetGame, checkWin };
+    return { board, currentPlayer, gridPos, timer, selectedPiece, xPieces, oPieces, 
+        handleCellClick, placePiece, movePiece, moveGrid, resetGame, checkWin, finishTurn, handlePlacePiece };
 })

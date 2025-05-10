@@ -2,6 +2,7 @@
 import MenuButton from './MenuButton.vue';
 import { useGameStore } from '../stores/GameStore.ts';
 import { usePlayerStore } from '../stores/PlayerStore.ts';
+import { makeAIMove } from '../aiLogic.ts';
 
 const gameStore = useGameStore();
 const playerStore = usePlayerStore();
@@ -22,6 +23,14 @@ const nextMove = () => {
     }
 }
 
+const opponent = () => {
+    if (gameStore.currentPlayer === 'X') {
+        return 'O';
+    } else {
+        return 'X';
+    }
+}
+
 </script>
 
 
@@ -34,7 +43,7 @@ const nextMove = () => {
             pieces left: {{ piecesLeft() }}
         </p>
         
-        <MenuButton>ai move</MenuButton>
+        <MenuButton @buttonClick="() => makeAIMove(gameStore.currentPlayer, opponent())">ai move</MenuButton>
         <MenuButton @buttonClick="() => gameStore.resetGame()">reset</MenuButton>
 
     </div>

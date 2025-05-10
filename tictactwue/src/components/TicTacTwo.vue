@@ -12,7 +12,8 @@ const gameStore = useGameStore();
         <Board :board=gameStore.board 
         :grid-pos=gameStore.gridPos 
         :grid-size=3
-        @cell-click="(x: number, y: number) => gameStore.handleCellClick(x, y)"/>
+        @cell-click="(x: number, y: number) => gameStore.handleCellClick(x, y)"
+        @arrow-click="(dx: number, dy: number) => gameStore.moveGrid(dx, dy)"/>
     </div>
 </template>
 
