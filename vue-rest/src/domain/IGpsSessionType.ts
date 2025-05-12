@@ -1,6 +1,6 @@
 import type { IDomainId } from "./IDomainId"
 
-export interface IGpsLocationType extends IDomainId {
+export interface IGpsSessionType extends IDomainId {
     id: string
     name: string
     description: string
