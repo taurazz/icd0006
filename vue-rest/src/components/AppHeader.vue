@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { useUserDataStore } from '@/stores/userDataStore';
 
+const userStore = useUserDataStore();
 </script>
 
 <template>
@@ -16,11 +18,14 @@
         <div class="navbar-nav">
           <a><RouterLink class="nav-link active" to="/">Home</RouterLink></a>
           <a><RouterLink class="nav-link" to="/location">Location</RouterLink></a>
-          <a><RouterLink class="nav-link" to="/">Session</RouterLink></a>
+          <a><RouterLink class="nav-link" to="/session">Session</RouterLink></a>
         </div>
-        <div class="navbar-nav">
+        <div v-if="userStore.jwt" class="navbar-nav">
           <a><RouterLink class="nav-link" to="/register">Register</RouterLink></a>
           <a><RouterLink class="nav-link" to="/login">Login</RouterLink></a>
+        </div>
+        <div v-else class="navbar-nav">
+          <a class="nav-link" href="/">Log out</a>
         </div>
       </div>
     </div>

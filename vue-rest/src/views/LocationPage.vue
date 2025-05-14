@@ -6,11 +6,13 @@ import type { IGpsLocationType } from '../domain/IGpsLocationType';
 
 const requestIsOngoing = ref(false);
 const data = reactive<IResultObject<IGpsLocationType[]>>({});
+const service = new GpsLocationTypeService();
+
 
 const fetchPageData = async() => {
   requestIsOngoing.value = true;
   try {
-    const result = await GpsLocationTypeService.getAll();
+    const result = await service.getAllAsync();
     console.log(result.data);
 
     data.data = result.data;
@@ -23,9 +25,9 @@ const fetchPageData = async() => {
   }
 }
 
-  onMounted(async() => {
-    await fetchPageData();
-  })
+onMounted(async() => {
+  await fetchPageData();
+})
 
 </script>
 

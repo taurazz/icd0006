@@ -10,6 +10,8 @@ const store = useUserDataStore();
 const email = ref('');
 const password = ref('');
 
+const error = ref<string | null>(null);
+
 const doLogin = async () => {
   const response = await IdentityService.login(email.value, password.value);
   console.log(response);
@@ -20,8 +22,10 @@ const doLogin = async () => {
     router.push({ name: 'Home' });
   } else {
     console.log('login failed');
+    error.value = response.errors?.[0] || 'Login failed';
   }
 }
+
 
 </script>
 
@@ -29,6 +33,10 @@ const doLogin = async () => {
   <div class="log-in-container">
     <h1>Log in</h1>
     <form class="login" @submit.prevent="doLogin">
+
+      <div v-if="error" class="alert alert-warning" role="alert">
+        {{ error }}
+      </div>
 
       <div data-mdb-input-init class="form-outline mb-4">
         <input v-model="email" type="email" aria-required="true" class="form-control" />
