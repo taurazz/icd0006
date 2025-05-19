@@ -1,5 +1,9 @@
+"use client";
+
+import Link from "next/link";
+
 export default function Header() {
-  
+
   return (
     <header className="absolute inset-x-0 top-0 z-50 bg-gray-800">
         <nav className="flex items-center justify-between p-4 lg:px-8" aria-label="Global">
@@ -21,13 +25,13 @@ export default function Header() {
             </button>
           </div>
           <div className="hidden lg:flex lg:gap-x-12">
-            <a href="/" className="text-sm font-semibold text-gray-300">Home</a>
-            <a href="/location" className="text-sm font-semibold text-gray-300">Location</a>
-            <a href="/session" className="text-sm font-semibold text-gray-300">Session</a>
+            <Link href="/" className="text-sm font-semibold text-gray-300">Home</Link>
+            <Link href="/location" className="text-sm font-semibold text-gray-300">Location</Link>
+            <Link href="/session" className="text-sm font-semibold text-gray-300">Session</Link>
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:gap-x-12 lg:justify-end">
-            <a href="/register" className="text-sm font-semibold text-gray-300">Register</a>
-            <a href="/login" className="text-sm font-semibold text-gray-300">Log in &rarr;</a>
+            <Link href="/register" className="text-sm font-semibold text-gray-300">Register</Link>
+            <Link href="/login" className="text-sm font-semibold text-gray-300">Log in &rarr;</Link>
           </div>
         </nav>
       </header>

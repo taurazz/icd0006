@@ -1,9 +1,8 @@
-import type { IGpsSession } from "@/domain/IGpsSession";
-import { BaseEntityService } from "./BaseEntityService";
+import type { IGpsSession } from '@/domain/IGpsSession'
+import { EntityService } from './EntityService'
 
-export class GpsSessionService extends BaseEntityService<IGpsSession> {
-    constructor() {
-        super("GpsSessions");
-    }
-
+export class GpsSessionService extends EntityService<IGpsSession> {
+  constructor() {
+    super('GpsSessions')
+  }
 }
