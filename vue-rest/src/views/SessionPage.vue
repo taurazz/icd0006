@@ -1,34 +1,31 @@
 <script setup lang="ts">
-import { onMounted, ref, reactive } from 'vue';
-import type { IResultObject } from '../types/IResultObject';
-import { GpsSessionService } from '../services/GpsSessionService';
-import type { IGpsSession } from '../domain/IGpsSession';
+import { onMounted, ref, reactive } from 'vue'
+import type { IResultObject } from '../types/IResultObject'
+import { GpsSessionService } from '../services/GpsSessionService'
+import type { IGpsSession } from '../types/domain/IGpsSession'
 
-const requestIsOngoing = ref(false);
-const data = reactive<IResultObject<IGpsSession[]>>({});
-const service = new GpsSessionService();
+const requestIsOngoing = ref(false)
+const data = reactive<IResultObject<IGpsSession[]>>({})
+const service = new GpsSessionService()
 
-
-const fetchPageData = async() => {
-  requestIsOngoing.value = true;
+const fetchPageData = async () => {
+  requestIsOngoing.value = true
   try {
-    const result = await service.getAllAsync();
-    console.log(result.data);
+    const result = await service.getAllAsync()
+    console.log(result.data)
 
-    data.data = result.data;
-    data.errors = result.errors;
-
+    data.data = result.data
+    data.errors = result.errors
   } catch (error) {
-    console.error(error);
+    console.error(error)
   } finally {
-    requestIsOngoing.value = false;
+    requestIsOngoing.value = false
   }
-};
+}
 
-onMounted(async() => {
-  await fetchPageData();
-});
-
+onMounted(async () => {
+  await fetchPageData()
+})
 </script>
 
 <template>
@@ -40,21 +37,11 @@ onMounted(async() => {
   <table class="table">
     <thead>
       <tr>
-        <th>
-          Name
-        </th>
-        <th>
-          Description
-        </th>
-        <th>
-          RecordedAt
-        </th>
-        <th>
-          Locations
-        </th>
-        <th>
-          User
-        </th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>RecordedAt</th>
+        <th>Locations</th>
+        <th>User</th>
         <th></th>
       </tr>
     </thead>
@@ -83,8 +70,6 @@ onMounted(async() => {
       </tr>
     </tbody>
   </table>
-
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

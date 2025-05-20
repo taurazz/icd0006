@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export abstract class BaseService {
-    protected axios = axios.create(
+    protected static axios = axios.create(
         {
             baseURL: "https://sportmap.akaver.com/api/v1.0/",
             headers: {
@@ -11,4 +11,6 @@ export abstract class BaseService {
             }
         }
     )
+
+	
 }

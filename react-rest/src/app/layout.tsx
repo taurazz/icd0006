@@ -1,29 +1,44 @@
+"use client";
+
 import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import { AccountContext, IAccountInfo } from "@/context/AccountContext";
+import { useState } from "react";
 
-export const metadata: Metadata = {
-  title: "React test",
-  description: "lolololol",
-};
 
 export default function RootLayout({
-  children,
+	children,
 }: Readonly<{
-  children: React.ReactNode;
+	children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body>
-        <div className="min-h-screen flex flex-col bg-gray-900 text-white">
-          <Header/>
-          <main className="flex-grow pt-32 px-6 lg:px-8 content-center">
-            {children}
-          </main>
-          <Footer/>
-        </div>
-      </body>
-    </html>
-  );
+	const [accountInfo, setAccountInfo] = useState<IAccountInfo | undefined>();
+
+	const updateAccountInfo = (accountData: IAccountInfo) => {
+		setAccountInfo(accountData);
+		localStorage.setItem("_jwt", accountData.jwt!);
+		localStorage.setItem("_refreshToken", accountData.refreshToken!);
+		localStorage.setItem("_firstName", accountData.firstName!);
+		localStorage.setItem("_lastName", accountData.lastName!);
+	}
+
+	return (
+		<html lang="en">
+			<body>
+				<AccountContext.Provider value={{
+					accountInfo: accountInfo,
+					setAccountInfo: updateAccountInfo
+				}}>
+					<div className="min-h-screen flex flex-col bg-gray-900 text-white">
+						<Header />
+						<main className="flex-grow pt-32 px-6 lg:px-8 content-center">
+							{children}
+						</main>
+						<Footer />
+					</div>
+				</AccountContext.Provider>
+			</body>
+		</html>
+	);
 }

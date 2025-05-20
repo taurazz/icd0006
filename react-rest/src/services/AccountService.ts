@@ -13,7 +13,7 @@ export class AccountService extends BaseService {
     }
 
     try {
-      const response = await this.axios.post<ILoginDto>(url + "?jwtExpiresInSeconds=5", loginData)
+      const response = await BaseService.axios.post<ILoginDto>(url + "?jwtExpiresInSeconds=5", loginData)
 			console.log('login response', response)
 
 			if (response.status <= 300) {

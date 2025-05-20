@@ -1,9 +1,11 @@
 "use client";
 
+import { AccountContext } from "@/context/AccountContext";
 import Link from "next/link";
+import { useContext } from "react";
 
 export default function Header() {
-
+  const {accountInfo, setAccountInfo} = useContext(AccountContext);
   return (
     <header className="absolute inset-x-0 top-0 z-50 bg-gray-800">
         <nav className="flex items-center justify-between p-4 lg:px-8" aria-label="Global">
@@ -26,13 +28,19 @@ export default function Header() {
           </div>
           <div className="hidden lg:flex lg:gap-x-12">
             <Link href="/" className="text-sm font-semibold text-gray-300">Home</Link>
+			<Link href="/session" className="text-sm font-semibold text-gray-300">Session</Link>
             <Link href="/location" className="text-sm font-semibold text-gray-300">Location</Link>
-            <Link href="/session" className="text-sm font-semibold text-gray-300">Session</Link>
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:gap-x-12 lg:justify-end">
             <Link href="/register" className="text-sm font-semibold text-gray-300">Register</Link>
+			{!accountInfo?.jwt &&
             <Link href="/login" className="text-sm font-semibold text-gray-300">Log in &rarr;</Link>
-          </div>
+			}
+			{accountInfo?.jwt && <>
+			<a>{accountInfo.firstName} {accountInfo.lastName}</a>
+            <Link href="/login" className="text-sm font-semibold text-gray-300">Log out</Link></>
+			}
+			</div>
         </nav>
       </header>
   );
