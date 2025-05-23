@@ -31,8 +31,10 @@ export default function Header() {
           </div>
           <div className="hidden lg:flex lg:gap-x-12">
             <Link href="/" className="text-sm font-semibold text-gray-300">Home</Link>
-			<Link href="/session" className="text-sm font-semibold text-gray-300">Session</Link>
-            <Link href="/location" className="text-sm font-semibold text-gray-300">Location</Link>
+			<Link href="/dashboard" className="text-sm font-semibold text-gray-300">Dashboard</Link>
+			<Link href="/sessions" className="text-sm font-semibold text-gray-300">Sessions</Link>
+			<Link href="/map" className="text-sm font-semibold text-gray-300">Map</Link>
+            <Link href="/locations" className="text-sm font-semibold text-gray-300">Locations</Link>
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:gap-x-12 lg:justify-end">
 
@@ -41,8 +43,10 @@ export default function Header() {
             <Link href="/login" className="text-sm font-semibold text-gray-300">Log in &rarr;</Link></>
 			}
 			{accountInfo?.jwt && <>
-			<a className="text-sm font-semibold text-gray-300">{accountInfo.firstName} {accountInfo.lastName}</a>
-            <a className="text-sm font-semibold text-gray-300" onClick={() => {
+			<Link className="text-sm font-semibold text-gray-300" href='/profile'>
+				{accountInfo.firstName} {accountInfo.lastName}
+			</Link>
+            <a className="text-sm font-semibold text-gray-300 cursor-pointer" onClick={() => {
 				setAccountInfo!({});
 				router.push('/');
 			}}>Log out</a></>

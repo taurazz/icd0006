@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { use, useContext, useEffect, useState } from "react";
 
-export default function Session() {
+export default function Sessions() {
     const sessionService = new GpsSessionService();
     const { accountInfo } = useContext(AccountContext);
     const router = useRouter();
@@ -26,7 +26,7 @@ export default function Session() {
 					console.log(result.errors);
 					return;
 				}
-				
+
 				setSessions(result.data!);
 				setLoading(false);
 			} catch (error) {
@@ -53,8 +53,8 @@ export default function Session() {
 					{session.name}
 				</td>
 				<td>
-					<Link href={"/session/edit" + session.id}>Edit</Link>
-					<Link href={"/session/delete" + session.id}>Delete</Link>
+					<Link href={"/sessions/edit" + session.id}>Edit</Link>
+					<Link href={"/sessions/delete" + session.id}>Delete</Link>
 				</td>
 			</tr>
 			)}
