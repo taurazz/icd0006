@@ -6,6 +6,7 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { AccountContext, IAccountInfo } from "@/context/AccountContext";
 import { useState } from "react";
+import { BaseService } from "@/services/BaseService";
 
 
 export default function RootLayout({
@@ -18,10 +19,11 @@ export default function RootLayout({
 	const updateAccountInfo = (accountData: IAccountInfo) => {
 		setAccountInfo(accountData);
 		localStorage.setItem("_jwt", accountData.jwt!);
-		localStorage.setItem("_refreshToken", accountData.refreshToken!);
 		localStorage.setItem("_firstName", accountData.firstName!);
 		localStorage.setItem("_lastName", accountData.lastName!);
 	}
+
+	BaseService.initInterceptors(() => localStorage.getItem("_jwt"));
 
 	return (
 		<html lang="en">

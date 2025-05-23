@@ -1,10 +1,9 @@
 import { IResultObject } from "@/types/IResultObject";
 import { BaseService } from "./BaseService";
 import { AxiosError } from "axios";
-import { useContext } from "react";
-import { AccountContext } from "@/context/AccountContext";
+import { IDomainId } from "@/types/domain/IDomainId";
 
-export abstract class EntityService<TEntity> extends BaseService {
+export abstract class EntityService<TEntity extends IDomainId> extends BaseService {
 
 	constructor(private basePath: string) {
 		super()
@@ -13,6 +12,7 @@ export abstract class EntityService<TEntity> extends BaseService {
   async getAllAsync(): Promise<IResultObject<TEntity[]>> {
     try {
       const response = await BaseService.axios.get<TEntity[]>(this.basePath)
+	  console.log('getAll response', response)
 
       if (response.status <= 300) {
         return {
@@ -34,35 +34,100 @@ export abstract class EntityService<TEntity> extends BaseService {
     }
   }
 
-  async addAsync(entity: TEntity): Promise<IResultObject<TEntity>> {
-	const {accountInfo} = useContext(AccountContext);
-    try {
-      let options = {}
+  async getAsync(id: string): Promise<IResultObject<TEntity>> {
+	try {
+		const response = await BaseService.axios.get<TEntity>(this.basePath + "/" + id)
+		console.log('get response', response)
 
-      if (accountInfo?.jwt) {
-        options = {
-          headers: {
-            Authorization: `Bearer ${accountInfo.jwt}`,
-          },
-        }
-      }
-
-      const response = await BaseService.axios.post<TEntity>(this.basePath, entity, options)
-
-      if (response.status <= 300) {
-        return { data: response.data }
+		      if (response.status <= 300) {
+        return {
+			statusCode: response.status,
+			data: response.data
+		 }
       }
       return {
+		statusCode: response.status,
         errors: [response.status.toString() + ' ' + response.statusText],
       }
     } catch (error) {
-      console.log('error: ', (error as Error).message)
+      console.log('error: ', (error as AxiosError).message)
 
       return {
-        errors: [JSON.stringify(error)],
+		statusCode: (error as AxiosError).status ?? 0,
+        errors: [(error as AxiosError).code ?? ""]
+      }
+	}
+  }
+
+  async addAsync(entity: TEntity): Promise<IResultObject<TEntity>> {
+    try {
+      const response = await BaseService.axios.post<TEntity>(this.basePath, entity)
+	  console.log('add response', response)
+
+      if (response.status <= 300) {
+        return {
+			statusCode: response.status,
+			data: response.data }
+      }
+      return {
+		statusCode: response.status,
+        errors: [response.status.toString() + ' ' + response.statusText],
+      }
+    } catch (error) {
+      console.log('error: ', (error as AxiosError).message)
+
+      return {
+        statusCode: (error as AxiosError).status ?? 0,
+        errors: [(error as AxiosError).code ?? ""]
+      }
+    }
+  }
+
+  async deleteAsync(id: string): Promise<IResultObject<null>> {
+    try {
+      const response = await BaseService.axios.delete<null>(this.basePath + "/" + id)
+	  console.log('delete response', response)
+
+      if (response.status <= 300) {
+        return {
+			statusCode: response.status,
+			data: null }
+      }
+      return {
+		statusCode: response.status,
+        errors: [response.status.toString() + ' ' + response.statusText],
+      }
+    } catch (error) {
+      console.log('error: ', (error as AxiosError).message)
+
+      return {
+        statusCode: (error as AxiosError).status ?? 0,
+        errors: [(error as AxiosError).code ?? ""]
+      }
+    }
+  }
+
+  async updateAsync(entity: TEntity): Promise<IResultObject<TEntity>> {
+    try {
+      const response = await BaseService.axios.put<TEntity>(this.basePath + '/' + entity.id, entity)
+	  console.log('update response', response)
+
+      if (response.status <= 300) {
+        return {
+			statusCode: response.status,
+			data: response.data }
+      }
+      return {
+		statusCode: response.status,
+        errors: [response.status.toString() + ' ' + response.statusText],
+      }
+    } catch (error) {
+      console.log('error: ', (error as AxiosError).message)
+
+      return {
+        statusCode: (error as AxiosError).status ?? 0,
+        errors: [(error as AxiosError).code ?? ""]
       }
     }
   }
 }
-
-

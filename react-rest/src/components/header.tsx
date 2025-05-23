@@ -2,10 +2,13 @@
 
 import { AccountContext } from "@/context/AccountContext";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useContext } from "react";
 
 export default function Header() {
   const {accountInfo, setAccountInfo} = useContext(AccountContext);
+  const router = useRouter();
+
   return (
     <header className="absolute inset-x-0 top-0 z-50 bg-gray-800">
         <nav className="flex items-center justify-between p-4 lg:px-8" aria-label="Global">
@@ -32,13 +35,17 @@ export default function Header() {
             <Link href="/location" className="text-sm font-semibold text-gray-300">Location</Link>
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:gap-x-12 lg:justify-end">
-            <Link href="/register" className="text-sm font-semibold text-gray-300">Register</Link>
-			{!accountInfo?.jwt &&
-            <Link href="/login" className="text-sm font-semibold text-gray-300">Log in &rarr;</Link>
+
+			{!accountInfo?.jwt && <>
+			<Link href="/register" className="text-sm font-semibold text-gray-300">Register</Link>
+            <Link href="/login" className="text-sm font-semibold text-gray-300">Log in &rarr;</Link></>
 			}
 			{accountInfo?.jwt && <>
-			<a>{accountInfo.firstName} {accountInfo.lastName}</a>
-            <Link href="/login" className="text-sm font-semibold text-gray-300">Log out</Link></>
+			<a className="text-sm font-semibold text-gray-300">{accountInfo.firstName} {accountInfo.lastName}</a>
+            <a className="text-sm font-semibold text-gray-300" onClick={() => {
+				setAccountInfo!({});
+				router.push('/');
+			}}>Log out</a></>
 			}
 			</div>
         </nav>
