@@ -1,6 +1,5 @@
 "use client";
 
-import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
@@ -34,7 +33,7 @@ export default function RootLayout({
 				}}>
 					<div className="min-h-screen flex flex-col bg-gray-900 text-white">
 						<Header />
-						<main className="flex-grow pt-32 px-6 lg:px-8 content-center">
+						<main className="flex-grow pt-16 px-6 lg:px-8 content-center">
 							{children}
 						</main>
 						<Footer />
