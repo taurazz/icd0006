@@ -7,8 +7,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { format, isSameDay } from 'date-fns';
-import { GpsSessionTypeService } from "@/services/GpsSessionTypeService";
-import { IGpsSessionType } from "@/types/domain/IGpsSessionType";
 
 export default function Sessions() {
 	const router = useRouter();
@@ -98,7 +96,7 @@ export default function Sessions() {
   return (
     <div className="flex flex-col items-center">
 		{/* Title and add */}
-        <div className="flex justify-between w-full max-w-3/4 p-4">
+        <div className="flex justify-between w-full max-w-5xl p-4">
           <h1 className="text-2xl font-semibold">GPS Sessions</h1>
           <button className="flex items-center gap-1 border px-4 py-2 rounded">
             <Link href='/sessions/create'>+ Add New</Link>
