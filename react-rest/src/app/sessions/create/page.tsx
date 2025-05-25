@@ -68,7 +68,7 @@ export default function SessionCreate() {
 			router.push("/profile");
 			setErrorMessage("");
 		} catch (error) {
-			setErrorMessage("Log in failed. " + (error as AxiosError).message);
+			setErrorMessage((error as AxiosError).message);
 		}
 	};
 

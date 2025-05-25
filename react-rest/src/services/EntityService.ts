@@ -3,7 +3,7 @@ import { BaseService } from "./BaseService";
 import { AxiosError } from "axios";
 import { IDomainId } from "@/types/domain/IDomainId";
 
-export abstract class EntityService<TEntity extends IDomainId, TCreate = TEntity> extends BaseService {
+export abstract class EntityService<TEntity extends IDomainId, TCreate extends IDomainId = TEntity> extends BaseService {
 
 	constructor(private basePath: string) {
 		super()
@@ -107,7 +107,7 @@ export abstract class EntityService<TEntity extends IDomainId, TCreate = TEntity
     }
   }
 
-  async updateAsync(entity: TEntity): Promise<IResultObject<TEntity>> {
+  async updateAsync(entity: TCreate): Promise<IResultObject<TEntity>> {
     try {
       const response = await BaseService.axios.put<TEntity>(this.basePath + '/' + entity.id, entity)
 	  console.log('update response', response)
