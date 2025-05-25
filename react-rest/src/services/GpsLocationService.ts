@@ -4,14 +4,14 @@ import { IResultObject } from "@/types/IResultObject";
 import { BaseService } from "./BaseService";
 import { AxiosError } from "axios";
 
-export class GpsLocationervice extends EntityService<IGpsLocation> {
+export class GpsLocationService extends EntityService<IGpsLocation> {
 	constructor() {
 		super('GpsLocations')
 	}
 
   async getBySessionAsync(sessionId: string): Promise<IResultObject<IGpsLocation[]>> {
 	try {
-	  const response = await BaseService.axios.get<IGpsLocation[]>('GpsLocations' + '/' + sessionId)
+	  const response = await BaseService.axios.get<IGpsLocation[]>('GpsLocations/Session/' + sessionId)
 	  console.log('get response', response)
 
 	  if (response.status <= 300) {
@@ -36,7 +36,7 @@ export class GpsLocationervice extends EntityService<IGpsLocation> {
 
     async addBulkAsync(sessionId: string, locations: IGpsLocation[]): Promise<IResultObject<IGpsLocation[]>> {
 	try {
-	  const response = await BaseService.axios.post<IGpsLocation[]>('GpsLocations' + '/' + sessionId, locations)
+	  const response = await BaseService.axios.post<IGpsLocation[]>('GpsLocations/' + sessionId, locations)
 	  console.log('add response', response)
 
 	  if (response.status <= 300) {

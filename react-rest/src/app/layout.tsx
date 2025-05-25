@@ -6,6 +6,7 @@ import Footer from "@/components/footer";
 import { AccountContext, IAccountInfo } from "@/context/AccountContext";
 import { useState } from "react";
 import { BaseService } from "@/services/BaseService";
+import { ISessionInfo, SessionContext } from "@/context/SelectedSessionsContext";
 
 
 export default function RootLayout({
@@ -14,6 +15,7 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	const [accountInfo, setAccountInfo] = useState<IAccountInfo | undefined>();
+	const [selectedSessions, setSelectedSessions] = useState<ISessionInfo[]>([]);
 
 	const updateAccountInfo = (accountData: IAccountInfo) => {
 		setAccountInfo(accountData);
@@ -21,6 +23,20 @@ export default function RootLayout({
 		localStorage.setItem("_firstName", accountData.firstName!);
 		localStorage.setItem("_lastName", accountData.lastName!);
 	}
+
+	const addSelectedSession = (session: ISessionInfo) => {
+		setSelectedSessions((prev) => [...prev, session]);
+	};
+
+	const updateSelectedSession = (updated: ISessionInfo) => {
+		setSelectedSessions((prev) =>
+			prev.map((s) => (s.id === updated.id ? updated : s))
+		);
+	};
+
+	const removeSelectedSession = (id: string) => {
+		setSelectedSessions((prev) => prev.filter((s) => s.id !== id));
+	};
 
 	BaseService.initInterceptors(() => localStorage.getItem("_jwt"));
 
@@ -31,6 +47,13 @@ export default function RootLayout({
 					accountInfo: accountInfo,
 					setAccountInfo: updateAccountInfo
 				}}>
+				<SessionContext.Provider value={{
+					selectedSessions,
+					setSelectedSessions,
+					addSelectedSession,
+					updateSelectedSession,
+					removeSelectedSession
+				}}>
 					<div className="min-h-screen flex flex-col bg-gray-900 text-white">
 						<Header />
 						<main className="flex-grow pt-16 px-6 lg:px-8 content-center">
@@ -38,6 +61,7 @@ export default function RootLayout({
 						</main>
 						<Footer />
 					</div>
+				</SessionContext.Provider>
 				</AccountContext.Provider>
 			</body>
 		</html>
