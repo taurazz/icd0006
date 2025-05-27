@@ -31,10 +31,8 @@ export default function Header() {
           </div>
           <div className="hidden lg:flex lg:gap-x-12">
             <Link href="/" className="text-sm font-semibold text-gray-300">Home</Link>
-			<Link href="/dashboard" className="text-sm font-semibold text-gray-300">Dashboard</Link>
 			<Link href="/sessions" className="text-sm font-semibold text-gray-300">Sessions</Link>
 			<Link href="/map" className="text-sm font-semibold text-gray-300">Map</Link>
-            <Link href="/locations" className="text-sm font-semibold text-gray-300">Locations</Link>
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:gap-x-12 lg:justify-end">
 

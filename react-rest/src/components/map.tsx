@@ -89,7 +89,7 @@ const Map = ({
     return L.divIcon({
       className: 'custom-marker',
       html: `<div style="background-color: ${color}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 8px; color: white; font-weight: bold;">${isStart ? 'S' : 'E'}</div>`,
-      iconSize: [12, 12],
+      iconSize: [15, 15],
       iconAnchor: [6, 6],
     });
   };

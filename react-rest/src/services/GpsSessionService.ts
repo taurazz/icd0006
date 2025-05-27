@@ -19,20 +19,15 @@ export class GpsSessionService extends EntityService<IGpsSession, IGpsSessionCre
 	}
 
 async getAllAsync(filters: GpsSessionFilters = {}): Promise<IResultObject<IGpsSession[]>> {
-        const now = new Date();
-        const defaultFrom = new Date(now);
-        defaultFrom.setFullYear(now.getFullYear() - 10);
-        const defaultTo = new Date(now);
-        defaultTo.setFullYear(now.getFullYear() + 10);
         try {
-            const response = await BaseService.axios.get<IGpsSession[]>('GpsSessions', {
-            params: {
-                minLocationsCount: filters.minLocationsCount ?? 0,
-                minDuration: filters.minDuration ?? 0,
-                minDistance: filters.minDistance ?? 0,
-                fromDateTime: filters.fromDateTime ?? defaultFrom.toISOString(),
-                toDateTime: filters.toDateTime ?? defaultTo.toISOString(),
-            }})
+			const response = await BaseService.axios.get<IGpsSession[]>('GpsSessions', {
+			params: {
+				minLocationsCount: filters.minLocationsCount ?? 0,
+				minDuration: filters.minDuration ?? 0,
+				minDistance: filters.minDistance ?? 0,
+				fromDateTime: filters.fromDateTime ?? '0001-01-01T00:00:00Z',
+				toDateTime: filters.toDateTime ?? '9999-12-31T23:59:59Z',
+			}})
             console.log('getAll response', response)
       if (response.status <= 300) {
         return {

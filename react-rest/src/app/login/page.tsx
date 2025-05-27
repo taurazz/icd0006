@@ -24,7 +24,7 @@ const Login = () => {
 	} = useForm<Inputs>({
 		defaultValues: {
 			email: "lololo@test.ee",
-			password: "Abc123.",
+			password: "Abc123",
 		}
 	});
 
@@ -45,7 +45,7 @@ const Login = () => {
 				lastName: handleLogin.data?.lastName
 			})
 
-			router.push("/dashboard");
+			router.push("/profile");
 			setErrorMessage("");
 		} catch (error) {
 			setErrorMessage("Log in failed. " + (error as Error).message);

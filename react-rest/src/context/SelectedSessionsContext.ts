@@ -7,6 +7,8 @@ export interface ISessionInfo {
 	id: string;
 	name: string;
 	locations: IGpsLocation[];
+	gpsSessionType: string,
+	userFirstLastName: string
 }
 
 export interface ISessionState {

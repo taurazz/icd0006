@@ -112,7 +112,9 @@ export default function Sessions() {
 								selectedSessionsData.push({
 								id: session.id,
 								name: session.name,
-								locations: locations
+								locations: locations,
+								gpsSessionType: session.gpsSessionType,
+								userFirstLastName: session.userFirstLastName
 							});
 					}
                 } catch (error) {
@@ -130,8 +132,6 @@ export default function Sessions() {
         });
 
         setSelectedSessionIds(new Set());
-
-        alert(`${selectedSessionsData.length} sessions added to map!`);
     };
 
     const clearSelection = () => {
@@ -296,7 +296,7 @@ export default function Sessions() {
 					</thead>
 					<tbody>
 						{paginatedSessions.map((session) =>
-						<tr key={session.id} className="hover:bg-gray-800">
+						<tr key={session.id} onClick={() => router.push('/sessions/' + session.id)} className="hover:bg-gray-800 cursor-pointer">
 							<td className="border px-3 py-2 text-center">
 								<input
 									type="checkbox"
@@ -308,8 +308,8 @@ export default function Sessions() {
 							<td className="px-2">
 								{format(new Date(session.recordedAt), 'yyyy-MM-dd HH:mm')}
 							</td>
-							<td className="relative group cursor-pointer px-2">
-								<div className="flex flex-col m-2" onClick={() => router.push('/sessions/' + session.id)}>
+							<td className="relative group px-2">
+								<div className="flex flex-col m-2" >
 									{session.name}
 									<div className="absolute top-full mt-1 bg-gray-700 text-white text-sm p-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-10 w-max max-w-xs text-center pointer-events-none">
 									{session.description}

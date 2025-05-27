@@ -18,7 +18,7 @@ export default function Session() {
 	const id = params?.id as string | undefined;
 
 	const { accountInfo } = useContext(AccountContext);
-	const userFirstLastName = accountInfo?.firstName! + ' ' + accountInfo?.lastName;
+	const userFirstLastName = accountInfo!.firstName! + ' ' + accountInfo!.lastName;
 
 	const [session, setSession] = useState<IGpsSession>();
 	const [loading, setLoading] = useState(true);
