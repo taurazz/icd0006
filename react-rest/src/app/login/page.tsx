@@ -34,6 +34,11 @@ const Login = () => {
 		try {
 			var handleLogin = await accountService.login(data.email, data.password)
 
+			if (handleLogin.messages) {
+				setErrorMessage(handleLogin.messages[0]);
+				return;
+			}
+
 			if (handleLogin.errors) {
 				setErrorMessage(handleLogin.statusCode + " - " + handleLogin.errors[0]);
 				return;
@@ -55,7 +60,13 @@ const Login = () => {
 	return (
 		<>
 			<div className="sm:mx-auto sm:w-full sm:max-w-sm">
-				{errorMessage}
+				{errorMessage &&
+					<div className="bg-gray-900 border border-red-400 text-red-600 px-4 py-3 text-center rounded relative" role="alert">
+						<span className="block sm:inline">{errorMessage}</span>
+						<span className="absolute top-0 bottom-0 right-0 px-4 py-3">
+						</span>
+					</div>
+				}
 				<h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">
 					Sign in to your account
 				</h2>

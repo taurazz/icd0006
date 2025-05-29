@@ -76,6 +76,13 @@ export default function SessionCreate() {
     <>
 
     <div className="flex flex-col items-center">
+		{errorMessage &&
+			<div className="bg-gray-900 border border-red-400 text-red-600 px-4 py-3 text-center rounded relative" role="alert">
+				<span className="block sm:inline">{errorMessage}</span>
+				<span className="absolute top-0 bottom-0 right-0 px-4 py-3">
+				</span>
+			</div>
+				}
 		{/* Title and add */}
         <div className="flex justify-between w-full max-w-2xl p-4">
           <h1 className="text-2xl font-semibold">Create a new GPS session {errorMessage}</h1>

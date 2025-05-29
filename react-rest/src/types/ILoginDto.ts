@@ -3,4 +3,5 @@ export interface ILoginDto {
 	status: string;
 	firstName: string;
 	lastName: string;
+	messages?: string[]
 }

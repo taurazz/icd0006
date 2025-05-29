@@ -2,6 +2,7 @@ import type { IResultObject } from '@/types/IResultObject'
 import { BaseService } from '@/services/BaseService'
 import type { ILoginDto } from '@/types/ILoginDto'
 import { AxiosError } from 'axios'
+import { IErrorResponse } from '@/types/IErrorResponse'
 
 export class AccountService extends BaseService {
   async login(email: string, password: string): Promise<IResultObject<ILoginDto>> {
@@ -26,12 +27,17 @@ export class AccountService extends BaseService {
 			return {
 				statusCode: response.status,
 				errors: [(response.status.toString() + ' ' + response.statusText).trim()],
+				messages: [response.data.messages?.join(', ') ?? '']
 			}
 		} catch (error) {
-			console.log('error: ', (error as Error).message)
+			const axiosError = error as AxiosError;
+			console.log('error: ', axiosError.message)
 			return {
-				statusCode: (error as AxiosError)?.status,
-				errors: [(error as AxiosError).code ?? ""],
+				statusCode: axiosError?.status,
+				errors: [axiosError.code ?? ""],
+				messages: axiosError.response?.data
+				        ? (axiosError.response?.data as IErrorResponse).messages
+          				: []
 			}
 		}
 	}
@@ -62,10 +68,14 @@ export class AccountService extends BaseService {
 				errors: [(response.status.toString() + ' ' + response.statusText).trim()],
 			}
 		} catch (error) {
-			console.log('error: ', (error as Error).message)
+			const axiosError = error as AxiosError;
+			console.log('error: ', axiosError.message)
 			return {
-				statusCode: (error as AxiosError)?.status,
-				errors: [(error as AxiosError).code ?? ""],
+				statusCode: axiosError?.status,
+				errors: [axiosError.code ?? ""],
+				messages: axiosError.response?.data
+				        ? (axiosError.response?.data as IErrorResponse).messages
+          				: []
 			}
 		}
 	}
