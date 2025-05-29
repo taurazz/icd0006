@@ -3,6 +3,20 @@
 import Header from '../components/Header.vue';
 import router from '../router';
 import MenuButton from '../components/MenuButton.vue';
+import { usePlayerStore } from '../stores/PlayerStore';
+import { useGameStore } from '../stores/GameStore';
+
+const playerStore = usePlayerStore();
+const gameStore = useGameStore();
+
+const getWinnerName = () => {
+  if (gameStore.winner === 'X') {
+    return playerStore.playerOne || 'Player 1';
+  } else if (gameStore.winner === 'O') {
+    return playerStore.playerTwo || 'Player 2';
+  }
+  return 'Unknown';
+};
 
 </script>
 
@@ -12,7 +26,7 @@ import MenuButton from '../components/MenuButton.vue';
     <div class="rulesbox">
       <h1>Game Over</h1>
       <p>
-        Blabla wins. The score is blabla.
+         {{ getWinnerName() }} wins. The score is {{ playerStore.playerOneScore }} - {{ playerStore.playerTwoScore }}.
       </p>
       <MenuButton @buttonClick="() => { router.push('/play') }">Play again</MenuButton>
     </div>

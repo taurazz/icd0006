@@ -1,14 +1,17 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
+import { usePlayerStore } from './PlayerStore';
+import router from '../router';
 
 export const useGameStore = defineStore('game', () => {
     const board = ref<(string | null)[][]>(Array(5).fill(null).map(() => Array(5).fill(null)));
     const currentPlayer = ref<'X' | 'O'>('X');
     const gridPos = ref<{ x: number, y: number }>({ x: 1, y: 1 });
-    const timer = ref<number>(0);
     const selectedPiece = ref<{ x: number, y: number } | null>(null);
     const xPieces = ref<number>(4);
     const oPieces = ref<number>(4);
+    const playerStore = usePlayerStore();
+    const winner = ref<'X' | 'O' | null>(null);
 
     function handleCellClick(x: number, y: number) {
 
@@ -20,7 +23,7 @@ export const useGameStore = defineStore('game', () => {
         if (!canDoAdvancedMoves(currentPlayer.value)) {
             handlePlacePiece(x, y);
         } else if (canDoAdvancedMoves(currentPlayer.value)) {
-            if (board.value[y][x] === null && selectedPiece === null) {
+            if (board.value[y][x] === null && selectedPiece.value === null) {
                 handlePlacePiece(x, y);
             } else {
                 handleMovePiece(x, y);
@@ -93,6 +96,18 @@ export const useGameStore = defineStore('game', () => {
     }
 
     function finishTurn(): void {
+        if (checkWin()) {
+            winner.value = currentPlayer.value;
+
+            if (currentPlayer.value == 'X') {
+                playerStore.playerOneScore += 1;
+            } else if (currentPlayer.value == 'O') {
+                playerStore.playerTwoScore += 1;
+            }
+            resetGame();
+            router.push('/gameover')
+            
+        }
         currentPlayer.value = currentPlayer.value === 'X' ? 'O' : 'X';
         selectedPiece.value = null;
     }
@@ -135,6 +150,7 @@ export const useGameStore = defineStore('game', () => {
         return false;
     }
 
+
     function canDoAdvancedMoves(player: 'X' | 'O'): boolean {
         return player === 'X'
             ? xPieces.value < 3
@@ -148,9 +164,9 @@ export const useGameStore = defineStore('game', () => {
         xPieces.value = 4;
         oPieces.value = 4;
         gridPos.value = { x: 1, y: 1 };
-        timer.value = 0;
+
     }
 
-    return { board, currentPlayer, gridPos, timer, selectedPiece, xPieces, oPieces, 
+    return { board, currentPlayer, gridPos, selectedPiece, xPieces, oPieces, winner,
         handleCellClick, placePiece, movePiece, moveGrid, resetGame, checkWin, finishTurn, handlePlacePiece };
 })

@@ -1,18 +1,17 @@
 import { useGameStore } from './stores/GameStore';
 
-
 export interface PlacePieceMove {
     type: 'PlacePiece';
     placeX: number;
     placeY: number;
-  }
-  
+}
+
 export interface MoveGridMove {
     type: 'MoveGrid';
     deltaX: number;
     deltaY: number;
 }
-  
+
 export interface MovePieceMove {
     type: 'MovePiece';
     fromX: number;
@@ -25,8 +24,6 @@ export type AIMove = PlacePieceMove | MoveGridMove | MovePieceMove;
 export type PlayerType = 'X' | 'O';
 export type BoardType = (string | null)[][];
 export type PositionType = { x: number; y: number; };
-
-
 
 export function makeAIMove(currentPlayer: PlayerType, opponent: PlayerType): boolean {
     const possibleMoves = getPossibleAIMoves(currentPlayer);
@@ -56,23 +53,26 @@ export function makeAIMove(currentPlayer: PlayerType, opponent: PlayerType): boo
 
 export function getPossibleAIMoves(player: PlayerType) {
     const gameStore = useGameStore();
-
     const moves: AIMove[] = [];
     const gridPosition: PositionType = gameStore.gridPos;
     const gridSize: number = 3;
     const board: BoardType = gameStore.board;
-    const totalPieces: number = countPieces();
-    const advancedMovesAllowed: boolean = totalPieces >= 4;
+
+    const advancedMovesAllowed: boolean = canDoAdvancedMoves(player);
+
+    const hasRemainingPieces: boolean = getRemainingPieces(player) > 0;
     
-    // 1. Place piece moves for empty cells in grid
-    for (let y = gridPosition.y; y < gridPosition.y + gridSize; y++) {
-        for (let x = gridPosition.x; x < gridPosition.x + gridSize; x++) {
-            if  (board[y][x] === null) {
-                moves.push({
-                    type: 'PlacePiece',
-                    placeX: x,
-                    placeY: y
-                });
+    // 1. Place piece moves for empty cells in grid (only if player has pieces left)
+    if (hasRemainingPieces) {
+        for (let y = gridPosition.y; y < gridPosition.y + gridSize; y++) {
+            for (let x = gridPosition.x; x < gridPosition.x + gridSize; x++) {
+                if (board[y][x] === null) {
+                    moves.push({
+                        type: 'PlacePiece',
+                        placeX: x,
+                        placeY: y
+                    });
+                }
             }
         }
     }
@@ -80,7 +80,7 @@ export function getPossibleAIMoves(player: PlayerType) {
     // 2. If advanced moves are allowed, AI can move a piece or the grid
     if (advancedMovesAllowed) {
         // a) Grid moves
-        const gridMoves: MoveGridMove[] =   getValidGridMoves();
+        const gridMoves: MoveGridMove[] = getValidGridMoves();
         gridMoves.forEach(({ deltaX, deltaY }) => {
             moves.push({
                 type: 'MoveGrid',
@@ -95,7 +95,7 @@ export function getPossibleAIMoves(player: PlayerType) {
                 if (board[y][x] === player) {
                     for (let ny = gridPosition.y; ny < gridPosition.y + gridSize; ny++) {
                         for (let nx = gridPosition.x; nx < gridPosition.x + gridSize; nx++) {
-                            if  (board[ny][nx] === null) {
+                            if (board[ny][nx] === null) {
                                 moves.push({
                                     type: 'MovePiece',
                                     fromX: x,
@@ -114,15 +114,27 @@ export function getPossibleAIMoves(player: PlayerType) {
     return moves;
 }
 
+function canDoAdvancedMoves(player: PlayerType): boolean {
+    const gameStore = useGameStore();
+    return player === 'X' 
+        ? gameStore.xPieces < 3 
+        : gameStore.oPieces < 3;
+}
+
+function getRemainingPieces(player: PlayerType): number {
+    const gameStore = useGameStore();
+    return player === 'X' ? gameStore.xPieces : gameStore.oPieces;
+}
+
 export function isWinningMove(move: AIMove, player: PlayerType) {
-    const simulatedBoard: BoardType =   simulateMove(move, player);
-    return  checkForWinInGrid(simulatedBoard, player);
+    const simulatedBoard: BoardType = simulateMove(move, player);
+    return checkForWinInGrid(simulatedBoard, player);
 }
 
 export function simulateMove(move: AIMove, player: PlayerType) {
     const gameStore = useGameStore();
-
     const simulatedBoard: BoardType = Array(5);
+    
     for (let y = 0; y < 5; y++) {
         simulatedBoard[y] = [...gameStore.board[y]];
     }
@@ -144,8 +156,7 @@ export function simulateMove(move: AIMove, player: PlayerType) {
 
 export function checkForWinInGrid(board: BoardType, player: PlayerType): boolean {
     const gameStore = useGameStore();
-
-    const gridPosition: PositionType =  gameStore.gridPos;
+    const gridPosition: PositionType = gameStore.gridPos;
     const gridSize: number = 3;
     
     const grid: BoardType = [];
@@ -183,9 +194,8 @@ export function checkForWinInGrid(board: BoardType, player: PlayerType): boolean
 
 export function getValidGridMoves(): MoveGridMove[] {
     const gameStore = useGameStore();
-
     const result: MoveGridMove[] = [];
-    const gridPosition: PositionType =  gameStore.gridPos;
+    const gridPosition: PositionType = gameStore.gridPos;
     const boardSize: number = 5;
     const gridSize: number = 3;
     
@@ -209,24 +219,6 @@ export function getValidGridMoves(): MoveGridMove[] {
     });
     
     return result;
-}
-
-export function countPieces(): number {
-    const gameStore = useGameStore();
-
-    let count: number = 0;
-    const board: BoardType =    gameStore.board;
-    const boardSize: number = 5;
-    
-    for (let y = 0; y < boardSize; y++) {
-        for (let x = 0; x < boardSize; x++) {
-            if (board[y][x] !== null) {
-                count++;
-            }
-        }
-    }
-    
-    return count;
 }
 
 export function executeAIMove(move: AIMove, player: PlayerType): void {
