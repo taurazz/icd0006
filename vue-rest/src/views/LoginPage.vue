@@ -19,7 +19,7 @@ const doLogin = async () => {
     store.jwt = response.data.token
     store.firstName = response.data.firstName
     store.lastName = response.data.lastName
-    router.push({ name: 'Home' })
+    router.push('/')
   } else {
     console.log('login failed')
     error.value = response.errors?.[0] || 'Login failed'
@@ -45,12 +45,6 @@ const doLogin = async () => {
         <label class="form-label" for="form2Example2">Password</label>
       </div>
 
-      <div class="row mb-4">
-        <div class="col">
-          <a href="#!">Forgot password?</a>
-        </div>
-      </div>
-
       <button
         type="submit"
         data-mdb-button-init
@@ -61,7 +55,7 @@ const doLogin = async () => {
       </button>
 
       <div class="text-center">
-        <p>Not a member? <a href="#!">Register</a></p>
+        <p>Not a member? <RouterLink to="/register">Register</RouterLink></p>
       </div>
     </form>
   </div>

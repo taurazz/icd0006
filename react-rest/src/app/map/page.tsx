@@ -28,6 +28,7 @@ export default function Map() {
 					...session,
 					locations: locations
 				});
+
 			} catch (error) {
 				console.error("Error refreshing session:", error);
 				updatedSessions.push(session);

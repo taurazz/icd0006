@@ -1,7 +1,15 @@
 <script setup lang="ts">
+import router from '@/router';
 import { useUserDataStore } from '@/stores/userDataStore';
 
 const userStore = useUserDataStore();
+
+const handleLogout = () => {
+  userStore.jwt = ''
+  userStore.firstName = ''
+  userStore.lastName = ''
+  router.push('/')
+}
 </script>
 
 <template>
@@ -17,15 +25,14 @@ const userStore = useUserDataStore();
       <div class="collapse navbar-collapse justify-content-between">
         <div class="navbar-nav">
           <a><RouterLink class="nav-link active" to="/">Home</RouterLink></a>
-          <a><RouterLink class="nav-link" to="/location">Location</RouterLink></a>
           <a><RouterLink class="nav-link" to="/session">Session</RouterLink></a>
         </div>
-        <div v-if="userStore.jwt" class="navbar-nav">
+        <div v-if="!userStore.jwt" class="navbar-nav">
           <a><RouterLink class="nav-link" to="/register">Register</RouterLink></a>
           <a><RouterLink class="nav-link" to="/login">Login</RouterLink></a>
         </div>
         <div v-else class="navbar-nav">
-          <a class="nav-link" href="/">Log out</a>
+          <a class="nav-link" @click="handleLogout">Log out</a>
         </div>
       </div>
     </div>

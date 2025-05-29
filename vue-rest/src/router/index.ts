@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
-import LocationPage from '@/views/LocationPage.vue'
 import RegisterPage from '@/views/RegisterPage.vue'
 import LoginPage from '@/views/LoginPage.vue'
 import SessionPage from '@/views/SessionPage.vue'
@@ -13,11 +12,6 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView
-    },
-    {
-      path: '/location',
-      name: 'location',
-      component: LocationPage
     },
     {
       path: '/session',
@@ -39,6 +33,12 @@ const router = createRouter({
       name: 'login',
       component: LoginPage
     },
+{
+  path: '/session/edit/:id',
+  name: 'sessionedit',
+  component: () => import('@/views/SessionEdit.vue'),
+},
+
   ]
 })
 

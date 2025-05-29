@@ -3,10 +3,13 @@ import { onMounted, ref, reactive } from 'vue'
 import type { IResultObject } from '../types/IResultObject'
 import { GpsSessionService } from '../services/GpsSessionService'
 import type { IGpsSession } from '../types/domain/IGpsSession'
+import { useUserDataStore } from '@/stores/userDataStore';
+import router from '@/router';
 
 const requestIsOngoing = ref(false)
 const data = reactive<IResultObject<IGpsSession[]>>({})
 const service = new GpsSessionService()
+const userStore = useUserDataStore();
 
 const fetchPageData = async () => {
   requestIsOngoing.value = true
@@ -24,8 +27,21 @@ const fetchPageData = async () => {
 }
 
 onMounted(async () => {
+  if (!userStore.jwt) {
+    router.push("/login");
+    return;
+  }
   await fetchPageData()
 })
+
+const handleDelete = async (id: string) => {
+  try {
+    const result = await service.removeAsync(id)
+    console.log(result)
+  } catch (error) {
+    console.error(error)
+  }
+}
 </script>
 
 <template>
@@ -63,9 +79,8 @@ onMounted(async () => {
           {{ item.userFirstLastName }}
         </td>
         <td>
-          <a href="/ContactTypes/Edit/01960002-68f1-7a7a-9947-e0c9b8c948f9">Edit</a> |
-          <a href="/ContactTypes/Details/01960002-68f1-7a7a-9947-e0c9b8c948f9">Details</a> |
-          <a href="/ContactTypes/Delete/01960002-68f1-7a7a-9947-e0c9b8c948f9">Delete</a>
+            <RouterLink :to="'/session/edit/' + item.id">Edit</RouterLink> |
+            <button @click="handleDelete(item.id!)">Delete</button>
         </td>
       </tr>
     </tbody>
