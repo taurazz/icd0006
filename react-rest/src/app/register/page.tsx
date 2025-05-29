@@ -15,6 +15,7 @@ const Register = () => {
 	type Inputs = {
 		email: string;
 		password: string;
+		confirmPassword: string;
 		firstName: string;
 		lastName: string;
 	};
@@ -22,11 +23,13 @@ const Register = () => {
 	const {
 		register,
 		handleSubmit,
+		watch,
 		formState: { errors },
 	} = useForm<Inputs>({
 		defaultValues: {
 			email: "user@test.ee",
 			password: "password123",
+			confirmPassword: "password456",
 			firstName: 'David',
 			lastName: 'Goggins'
 		}
@@ -36,6 +39,12 @@ const Register = () => {
 		console.log(data);
 		setErrorMessage("Loading...");
 		try {
+
+			if (data.password !== data.confirmPassword) {
+				setErrorMessage("Passwords do not match.");
+				return;
+			}
+
 			var handleRegister = await accountService.register(
 				data.email,
 				data.password,
@@ -54,7 +63,7 @@ const Register = () => {
 				lastName: handleRegister.data?.lastName
 			})
 
-			router.push("/dashboard");
+			router.push("/profile");
 			setErrorMessage("");
 		} catch (error) {
 			setErrorMessage("Register failed. " + (error as Error).message);
@@ -149,6 +158,23 @@ const Register = () => {
 							className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
 						/>
 						{errors.password && <span className="mt-1 text-sm text-red-500">{errors.password.message}</span>}
+					</div>
+					<div>
+						<label htmlFor="confirmPassword" className="block text-sm font-medium text-white">
+							Confirm Password
+						</label>
+						<div className="mt-2">
+							<input
+								type="password"
+								id="confirmPassword"
+								{...register("confirmPassword", {
+									required: "Please confirm your password",
+									validate: (value) => value === watch("password") || "Passwords do not match",
+								})}
+								className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 placeholder:text-gray-400 focus:outline-indigo-600 sm:text-sm"
+							/>
+							{errors.confirmPassword && <span className="text-sm text-red-500">{errors.confirmPassword.message}</span>}
+						</div>
 					</div>
 				</div>
 

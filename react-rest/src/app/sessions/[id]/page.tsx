@@ -5,24 +5,30 @@ import { GpsSessionService } from "@/services/GpsSessionService";
 import { IGpsSession } from "@/types/domain/IGpsSession";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
-
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
 import { AxiosError } from "axios";
+import { ISessionInfo, SessionContext } from "@/context/SelectedSessionsContext";
+import { GpsLocationService } from "@/services/GpsLocationService";
 
 export default function Session() {
 	const router = useRouter();
 	const sessionService = new GpsSessionService();
+	const locationService = new GpsLocationService();
 	const params = useParams();
 	const id = params?.id as string | undefined;
 
 	const { accountInfo } = useContext(AccountContext);
 	const userFirstLastName = accountInfo!.firstName! + ' ' + accountInfo!.lastName;
+	const { selectedSessions, addSelectedSession, setSelectedSessions } = useContext(SessionContext);
 
 	const [session, setSession] = useState<IGpsSession>();
 	const [loading, setLoading] = useState(true);
 	const [errorMessage, setErrorMessage] = useState("");
+
+	let sessionData: ISessionInfo;
+
 
 	useEffect(() => {
 		if (!accountInfo?.jwt) {
@@ -73,23 +79,58 @@ export default function Session() {
 		}
 	}
 
+	const handleAddToMap = async (session: IGpsSession) => {
+		const selectedSessionsData: ISessionInfo[] = [];
+		try {
+			const response = await locationService.getBySessionAsync(session.id!)
+
+			if (response.errors) {
+				console.log(response.errors)
+			}
+
+			const locations = response.data || [];
+			if (session.id) {
+						selectedSessionsData.push({
+						id: session.id,
+						name: session.name,
+						locations: locations,
+						gpsSessionType: session.gpsSessionType,
+						userFirstLastName: session.userFirstLastName
+					});
+			}
+		} catch (error) {
+			console.error("Error fetching locations:", error);
+		}
+		selectedSessionsData.forEach(session => {
+			console.log(session)
+            const exists = selectedSessions.find(s => s.id === session.id);
+            if (!exists) {
+				addSelectedSession(session);
+            }
+        });
+	}
+
 	return (
 		<>
 		<div className="flex flex-col items-center">
 
 			<div className="flex justify-between w-full max-w-3xl p-4 items-center">
 				<h1 className="text-2xl font-semibold">Session info</h1>
+				<div className="flex">
+				<button className="flex items-center gap-1 border px-4 py-2 rounded m-2 cursor-pointer"
+					onClick={() => handleAddToMap(session!)}>
+						Add to Map
+				</button>
 				{userFirstLastName === session!.userFirstLastName && (
-					<div className="flex">
-						<button className="flex items-center gap-1 border px-4 py-2 rounded m-2">
+					<><button className="flex items-center gap-1 border px-4 py-2 rounded m-2">
 							<Link href={`/sessions/edit/${id}`}>Edit</Link>
 						</button>
 						<button className="flex items-center gap-1 border px-4 py-2 rounded m-2 cursor-pointer"
 						onClick={() => handleDelete(id!)}>
 							Delete
-						</button>
-					</div>
+						</button></>
 				)}
+				</div>
 			</div>
 
 			<div className="flex justify-center w-full max-w-3xl">

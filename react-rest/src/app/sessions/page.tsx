@@ -19,7 +19,6 @@ export default function Sessions() {
     const {
 		selectedSessions: selectedSessions,
 		addSelectedSession,
-		removeSelectedSession,
 		setSelectedSessions:
 		setSelectedSessions
 	} = useContext(SessionContext);
@@ -74,7 +73,6 @@ export default function Sessions() {
 		currentPage * pageSize
   	);
 
-    // Handle individual session selection
     const handleSessionSelect = (sessionId: string, checked: boolean) => {
         const newSelected = new Set(selectedSessionIds);
         if (checked) {
@@ -292,11 +290,12 @@ export default function Sessions() {
 							<th className="border px-3 py-2">Name</th>
 							<th className="border px-3 py-2">Type</th>
 							<th className="border px-3 py-2">User</th>
+							<th className="border px-3 py-2">Locations count</th>
 						</tr>
 					</thead>
 					<tbody>
 						{paginatedSessions.map((session) =>
-						<tr key={session.id} onClick={() => router.push('/sessions/' + session.id)} className="hover:bg-gray-800 cursor-pointer">
+						<tr key={session.id} className="hover:bg-gray-800 cursor-pointer">
 							<td className="border px-3 py-2 text-center">
 								<input
 									type="checkbox"
@@ -305,10 +304,10 @@ export default function Sessions() {
 									className="w-4 h-4 accent-indigo-600"
 								/>
 							</td>
-							<td className="px-2">
+							<td className="px-2" onClick={() => router.push('/sessions/' + session.id)}>
 								{format(new Date(session.recordedAt), 'yyyy-MM-dd HH:mm')}
 							</td>
-							<td className="relative group px-2">
+							<td className="relative group px-2" onClick={() => router.push('/sessions/' + session.id)}>
 								<div className="flex flex-col m-2" >
 									{session.name}
 									<div className="absolute top-full mt-1 bg-gray-700 text-white text-sm p-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-10 w-max max-w-xs text-center pointer-events-none">
@@ -316,7 +315,7 @@ export default function Sessions() {
 									</div>
 								</div>
 							</td>
-							<td className="px-2">
+							<td className="px-2" onClick={() => router.push('/sessions/' + session.id)}>
 								{(() => {
 									try {
 										const parsed = JSON.parse(session.gpsSessionType);
@@ -326,8 +325,11 @@ export default function Sessions() {
 									}
 								})()}
 							</td>
-							<td className="px-2">
+							<td className="px-2" onClick={() => router.push('/sessions/' + session.id)}>
 								{session.userFirstLastName}
+							</td>
+							<td className="px-2" onClick={() => router.push('/sessions/' + session.id)}>
+								{session.gpsLocationsCount}
 							</td>
 						</tr>
 						)}
